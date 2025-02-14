@@ -5,12 +5,14 @@ require('dotenv').config();
 
 const { log } = require('./utils/logger');
 
-// Create a new client instance with minimal required intents
+// Create a new client instance with required intents
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildPresences // Add presence intent for better member tracking
     ]
 });
 
