@@ -13,6 +13,20 @@ module.exports = {
             return;
         }
 
+        // Check for bot mention
+        if (message.mentions.has(client.user)) {
+            log('info', `Bot mention detected in message ID: ${message.id}`);
+            const mentionCommand = client.commands.get('mention');
+            if (mentionCommand) {
+                try {
+                    mentionCommand.execute(message, [], client);
+                } catch (error) {
+                    log('error', `Error executing mention response:`, error);
+                }
+            }
+            return;
+        }
+
         // Check for command prefix
         const prefix = '!';
         if (!message.content.startsWith(prefix)) {
