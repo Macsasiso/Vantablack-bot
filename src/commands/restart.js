@@ -1,5 +1,5 @@
-const { PermissionsBitField } = require('discord.js');
-const { setMaintenanceMode } = require('../utils/maintenance');
+const { PermissionsBitField, ActivityType } = require('discord.js');
+const { setMaintenanceMode, isMaintenanceMode } = require('../utils/maintenance');
 const { log } = require('../utils/logger');
 
 module.exports = {
@@ -11,26 +11,30 @@ module.exports = {
             return message.reply('❌ Sorry, only administrators can use this command!');
         }
 
+        // Check if actually in maintenance mode
+        if (!isMaintenanceMode()) {
+            return message.reply('⚠️ Bot is not in maintenance mode.');
+        }
+
         try {
-            // Update presence to online with default activity
+            // Disable maintenance mode first
+            await setMaintenanceMode(false, message.client);
+            log('info', `Maintenance mode disabled by ${message.author.tag}`);
+
+            // Update presence
             await message.client.user.setPresence({
                 status: 'online',
                 activities: [{
                     name: '!help for commands',
-                    type: 'PLAYING'
+                    type: ActivityType.Playing
                 }]
             });
 
-            // Disable maintenance mode after status is updated
-            setMaintenanceMode(false);
-
-            // Log the restart
-            log('info', `Bot restarted from maintenance mode by ${message.author.tag}`);
-
-            // Send confirmation message
+            // Confirm restart
             return message.reply('✅ Bot is now back online and operational!');
         } catch (error) {
             log('error', 'Error restarting bot:', error);
+            await setMaintenanceMode(true, message.client); // Revert to maintenance mode if status update fails
             return message.reply('❌ Failed to restart the bot!');
         }
     }
