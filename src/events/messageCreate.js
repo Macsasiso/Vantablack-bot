@@ -1,4 +1,5 @@
 const { log } = require('../utils/logger');
+const { isMaintenanceMode } = require('../utils/maintenance');
 
 module.exports = {
     name: 'messageCreate',
@@ -18,6 +19,14 @@ module.exports = {
         if (!client.commands.has(commandName)) return;
 
         const command = client.commands.get(commandName);
+
+        // If in maintenance mode, only allow restart and maintenance commands
+        if (isMaintenanceMode()) {
+            if (!['restart', 'maintenance'].includes(commandName)) {
+                message.reply('⚠️ Bot is currently in maintenance mode. Please wait until an administrator uses !restart');
+                return;
+            }
+        }
 
         try {
             // Execute command

@@ -42,8 +42,29 @@ for (const file of eventFiles) {
 }
 
 // Error handling
-process.on('unhandledRejection', error => {
+process.on('unhandledRejection', async error => {
     log('error', 'Unhandled promise rejection:', error);
+    try {
+        // Set status to idle when an error occurs
+        await client.user.setStatus('idle');
+        await client.user.setActivity('⚠️ Error Encountered', { type: 'PLAYING' });
+        log('info', 'Bot status set to idle due to error');
+    } catch (setStatusError) {
+        log('error', 'Failed to set status to idle:', setStatusError);
+    }
+});
+
+// Add additional error handler for uncaught exceptions
+process.on('uncaughtException', async error => {
+    log('error', 'Uncaught exception:', error);
+    try {
+        // Set status to idle when an error occurs
+        await client.user.setStatus('idle');
+        await client.user.setActivity('⚠️ Error Encountered', { type: 'PLAYING' });
+        log('info', 'Bot status set to idle due to error');
+    } catch (setStatusError) {
+        log('error', 'Failed to set status to idle:', setStatusError);
+    }
 });
 
 // Login to Discord
