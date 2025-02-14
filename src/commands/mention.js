@@ -15,7 +15,7 @@ module.exports = {
                 .setTimestamp()
                 .setFooter({ text: 'hah you looked 👌' });
 
-            message.reply({ embeds: [embed] });
+            message.send({ embeds: [embed] });
             log('info', 'Mention response sent successfully');
         } catch (error) {
             log('error', 'Error handling mention:', error);

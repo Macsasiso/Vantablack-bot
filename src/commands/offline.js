@@ -10,11 +10,14 @@ module.exports = {
         }
 
         // Send confirmation message
-        await message.reply('🔌 Going offline... Goodbye!');
+        await message.reply('Initializing shutdown sequence...');
         
         // Log the shutdown
         console.log(`[${new Date().toISOString()}] Bot shutdown initiated by ${message.author.tag}`);
         
+        message.client.user.setPresence({
+            status: 'invisible',
+        });
         // Destroy the client connection
         message.client.destroy();
         

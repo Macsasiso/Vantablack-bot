@@ -23,9 +23,9 @@ module.exports = {
 
             // Update presence
             await message.client.user.setPresence({
-                status: 'dnd',
+                status: 'idle',
                 activities: [{
-                    name: '🔧 Under Maintenance',
+                    name: 'Under Maintenance',
                     type: ActivityType.Playing
                 }]
             });
