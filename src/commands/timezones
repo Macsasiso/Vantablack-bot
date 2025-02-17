@@ -1,0 +1,192 @@
+const { EmbedBuilder } = require('discord.js');
+const { log } = require('../utils/logger');
+
+const timezoneData = [
+    {
+        utc: "UTC -12:00",
+        locations: "Baker Island, Howland Island"
+    },
+    {
+        utc: "UTC -11:00",
+        locations: "American Samoa, Midway Atoll, Niue"
+    },
+    {
+        utc: "UTC -10:00",
+        locations: "Hawaii-Aleutian Time, Cook Islands, Tahiti"
+    },
+    {
+        utc: "UTC -09:30",
+        locations: "Marquesas Islands"
+    },
+    {
+        utc: "UTC -09:00",
+        locations: "Alaska Time, Gambier Islands"
+    },
+    {
+        utc: "UTC -08:00",
+        locations: "Pacific Time (US & Canada), Clipperton Island"
+    },
+    {
+        utc: "UTC -07:00",
+        locations: "Mountain Time (US & Canada), Chihuahua, La Paz, Mazatlan"
+    },
+    {
+        utc: "UTC -06:00",
+        locations: "Central Time (US & Canada), Mexico City, Tegucigalpa"
+    },
+    {
+        utc: "UTC -05:00",
+        locations: "Eastern Time (US & Canada), Bogota, Lima, Quito"
+    },
+    {
+        utc: "UTC -04:00",
+        locations: "Atlantic Time (Canada), Caracas, La Paz"
+    },
+    {
+        utc: "UTC -03:30",
+        locations: "Newfoundland"
+    },
+    {
+        utc: "UTC -03:00",
+        locations: "Buenos Aires, Georgetown, Greenland"
+    },
+    {
+        utc: "UTC -02:00",
+        locations: "Mid-Atlantic"
+    },
+    {
+        utc: "UTC -01:00",
+        locations: "Azores, Cape Verde Islands"
+    },
+    {
+        utc: "UTC +00:00",
+        locations: "Greenwich Mean Time (GMT), Dublin, London, Lisbon"
+    },
+    {
+        utc: "UTC +01:00",
+        locations: "Central European Time (CET), West Africa Time (WAT)"
+    },
+    {
+        utc: "UTC +02:00",
+        locations: "Eastern European Time (EET), Central Africa Time (CAT)"
+    },
+    {
+        utc: "UTC +03:00",
+        locations: "Moscow Time, East Africa Time (EAT), Arabia Standard Time (AST)"
+    },
+    {
+        utc: "UTC +03:30",
+        locations: "Iran Standard Time (IRST)"
+    },
+    {
+        utc: "UTC +04:00",
+        locations: "Gulf Standard Time (GST), Samara Time"
+    },
+    {
+        utc: "UTC +04:30",
+        locations: "Afghanistan Time (AFT)"
+    },
+    {
+        utc: "UTC +05:00",
+        locations: "Pakistan Standard Time (PKT), Yekaterinburg Time"
+    },
+    {
+        utc: "UTC +05:30",
+        locations: "Indian Standard Time (IST), Sri Lanka Time"
+    },
+    {
+        utc: "UTC +05:45",
+        locations: "Nepal Time (NPT)"
+    },
+    {
+        utc: "UTC +06:00",
+        locations: "Bangladesh Time (BST), Bhutan Time (BTT), Omsk Time"
+    },
+    {
+        utc: "UTC +06:30",
+        locations: "Cocos Islands, Myanmar"
+    },
+    {
+        utc: "UTC +07:00",
+        locations: "Indochina Time (ICT), Krasnoyarsk Time"
+    },
+    {
+        utc: "UTC +08:00",
+        locations: "China Standard Time (CST), Australian Western Standard Time (AWST), Irkutsk Time"
+    },
+    {
+        utc: "UTC +08:45",
+        locations: "Australian Central Western Standard Time"
+    },
+    {
+        utc: "UTC +09:00",
+        locations: "Japan Standard Time (JST), Korea Standard Time (KST), Yakutsk Time"
+    },
+    {
+        utc: "UTC +09:30",
+        locations: "Australian Central Standard Time (ACST)"
+    },
+    {
+        utc: "UTC +10:00",
+        locations: "Australian Eastern Standard Time (AEST), Vladivostok Time"
+    },
+    {
+        utc: "UTC +10:30",
+        locations: "Lord Howe Island"
+    },
+    {
+        utc: "UTC +11:00",
+        locations: "Solomon Islands, Magadan Time"
+    },
+    {
+        utc: "UTC +12:00",
+        locations: "New Zealand Standard Time (NZST), Fiji Time"
+    },
+    {
+        utc: "UTC +12:45",
+        locations: "Chatham Islands"
+    },
+    {
+        utc: "UTC +13:00",
+        locations: "Phoenix Islands, Tonga"
+    },
+    {
+        utc: "UTC +14:00",
+        locations: "Line Islands"
+    }
+];
+
+module.exports = {
+    name: 'timezones',
+    description: 'Display timezone information with reactions',
+    async execute(message, args) {
+        try {
+            log('info', `Timezone command initiated by ${message.author.tag}`);
+
+            // Send initial message
+            await message.channel.send('🌍 **World Time Zones** 🌎\nReact to any message to save it for reference!');
+
+            // Send timezone information in separate messages
+            for (const timezone of timezoneData) {
+                const embed = new EmbedBuilder()
+                    .setColor('#0099ff')
+                    .setTitle(timezone.utc)
+                    .setDescription(timezone.locations)
+                    .setFooter({ text: '👆 React to save this timezone' });
+
+                const timezoneMess = await message.channel.send({ embeds: [embed] });
+
+                // Add a default reaction
+                await timezoneMess.react('🕒');
+
+                // Add small delay to prevent rate limiting
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+
+            log('info', `Successfully sent all timezone information for ${message.author.tag}`);
+        } catch (error) {
+            log('error', `Error in timezone command:`, error);
+            await message.reply('There was an error displaying the timezones!');
+        }
+    }
+};
